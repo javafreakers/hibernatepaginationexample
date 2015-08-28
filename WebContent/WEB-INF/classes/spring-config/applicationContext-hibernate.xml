@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+       http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+	<bean
+		class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" />
+
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:jdbc.properties</value>
+			</list>
+		</property>
+	</bean>
+	<tx:annotation-driven />
+	
+ 	<bean id="transactionManager"
+        class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    <!-- data source for our database -->
+
+ 	 <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+               destroy-method="close">
+               <property name="driverClassName">
+                       <value>${jdbc.driverClassName}</value>
+               </property>
+
+               <property name="url">
+                       <value>${jdbc.url}</value>
+               </property>
+
+               <property name="username">
+                       <value>${jdbc.username}</value>
+               </property>
+
+               <property name="password">
+                       <value>${jdbc.password}</value>
+               </property>
+
+               <property name="poolPreparedStatements">
+                       <value>true</value>
+               </property>
+
+               <property name="initialSize">
+                       <value>5</value>
+                       <!--<value>1</value> -->
+               </property>
+
+               <property name="maxActive">
+                       <value>30</value>
+               </property>
+
+               <property name="maxIdle">
+                       <value>10</value>
+               </property>
+                  <property name="minIdle">
+                       <value>5</value>
+               </property>
+
+               <property name="validationQuery">
+                       <value>select 1</value>
+               </property>
+       </bean>
+ 	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+  		<property name="dataSource" ref="dataSource" />
+  		<property name="annotatedClasses">
+   		<list>
+			<value>com.javafreakers.model.Product</value>
+			</list>
+  		</property>
+  		<property name="hibernateProperties">
+   			<props>
+    			<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+    			<prop key="hibernate.show_sql">true</prop>
+    			<prop key="hibernate.hbm2ddl.auto">update</prop>
+   			</props>
+  		</property>
+ 	</bean>
+</beans>
