@@ -1,4 +1,4 @@
-<%@page import="com.javafreakers.model.Product"%>
+ <%@page import="com.javafreakers.model.Product"%>
 <%@page import="java.util.List"%>
 <html>
 <head>
@@ -6,8 +6,17 @@
 </head>
 <body>
 <%
-List<Product>  products = (List<Product>)session.getAttribute("pList");
-//int   size = Integer.parseInt((String)session.getAttribute("size"));
+List<Product>  products = (List<Product>)session.getAttribute("productList");
+List<Integer>  pageList = (List<Integer>)session.getAttribute("pageList");
+String offSet = request.getParameter("offSet");
+int disabledLINK = 0;
+if(offSet!=null){
+	disabledLINK = Integer.parseInt(offSet);
+}
+
+System.out.print(pageList);
+
+int   size = Integer.parseInt(session.getAttribute("size").toString());
 
 %>
 
@@ -29,10 +38,23 @@ for(Product product:products){
 
 </tr>
 <%} %>
-<%for(int i=0;i<10;i++) {%>
-<a href="productsHome.html?offSet=<%=i%>"><%=i+"" %></a>
-<%} %>
-</table>
 
+</table>
+<%if(disabledLINK != 0){ %>
+<a href="productsHome.html?offSet=<%=0%>">Start</a>
+<%} %>
+<%for(Integer i:pageList) {
+if(disabledLINK == i ){
+	if(disabledLINK!=size){
+%>
+<%=i %>
+<%}}else{ %>
+<a href="productsHome.html?offSet=<%=i%>"><%=i+"" %></a>
+<%}} %>
+<%if(disabledLINK == size){ %>
+<%-- <%="End"%> --%>
+<%}else{ %>
+<a href="productsHome.html?offSet=<%=size%>">End</a>
+<%} %>
 </body>
-</html>
+</html> 
